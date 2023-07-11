@@ -4,9 +4,11 @@ name: Build and test of Reactive Java Project
 on:
     push:
         branches: [main]
+    pull_request:
+        branches: [main]
 
 jobs:
-    build:
+    build-and-push:
         runs-on: ubuntu-latest
     
         steps:
@@ -16,7 +18,17 @@ jobs:
           with:
             distribution: 'adopt'
             java-version: 11
-        - name: Mave Package
-          run: mvn -B clean package -DskipTests
-        - name: Maven Verify
-          run: mvn -B clean verify
+        - name: Maven Package
+          run: mvn -B package --file pom.xml
+        - name: Publish to Docker Hub
+          uses: docker/build-push-action@v1
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_USERNAME }}
+        - name: Build Docker image
+          run: |
+            docker build -t myapp:latest .
+        - name: Push Docker image
+          run: |
+            docker tag myapp:latest ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
