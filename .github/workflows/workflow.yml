@@ -25,5 +25,8 @@ jobs:
           with:
             username: ${{secrets.DOCKERHUB_USERNAME}}
             password: ${{secrets.DOCKERHUB_USERNAME}}
-            repository: vmedinam24/bankproducts
-            tags: ${{github.run_number}}
+        - name: Build and push
+          uses: docker/build-push-action@v4
+          with:
+            push: true
+            tags: vmedinam24/bankproducts:latest
