@@ -23,12 +23,7 @@ jobs:
         - name: Publish to Docker Hub
           uses: docker/build-push-action@v1
           with:
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_USERNAME }}
-        - name: Build Docker image
-          run: |
-            docker build -t myapp:latest .
-        - name: Push Docker image
-          run: |
-            docker tag myapp:latest ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
-            docker push ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest
+            username: ${{secrets.DOCKERHUB_USERNAME}}
+            password: ${{secrets.DOCKERHUB_USERNAME}}
+            repository: dockerHubUser/dockerHubRepository
+            tags: ${{github.run_number}}
