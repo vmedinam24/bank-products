@@ -20,17 +20,15 @@ jobs:
             java-version: 11
         - name: Maven Package
           run: mvn clean package
-        - name: Set up QEMU
-          uses: docker/setup-qemu-action@v2
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v2
         - name: Login to Docker Hub
           uses: docker/login-action@v2
           with:
             username: ${{secrets.DOCKERHUB_USERNAME}}
             password: ${{secrets.DOCKERHUB_TOKEN}}
-        - name: Build and push
-          uses: docker/build-push-action@v4
-          with:
-            push: true
-            tags: vmedinam24/bankproducts:latest
+        - name: Build docker image
+          run: |
+           docker build -t bankproducts:latest .
+        - name: Push Docker image
+          run: |
+            docker tag bankproducts:latest vmedinam24/bankproducts:latest
+            docker push vmedinam24/bankproducts:latest
