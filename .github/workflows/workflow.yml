@@ -8,7 +8,7 @@ on:
         branches: [main]
 
 jobs:
-    build-and-push:
+    build:
         runs-on: ubuntu-latest
     
         steps:
@@ -19,11 +19,11 @@ jobs:
             distribution: 'adopt'
             java-version: 11
         - name: Maven Package
-          run: mvn -B package --file pom.xml
+          run: mvn clean install
         - name: Publish to Docker Hub
           uses: docker/build-push-action@v1
           with:
             username: ${{secrets.DOCKERHUB_USERNAME}}
             password: ${{secrets.DOCKERHUB_USERNAME}}
-            repository: dockerHubUser/dockerHubRepository
+            repository: vmedinam24/bankproducts
             tags: ${{github.run_number}}
