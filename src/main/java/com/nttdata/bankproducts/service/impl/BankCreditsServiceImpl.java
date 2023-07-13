@@ -33,9 +33,7 @@ public class BankCreditsServiceImpl implements BankCreditsService {
    */
   @Override
   public Maybe<BankCredits> create(BankCredits bankCredits) {
-    Client client = clientFeign.read(bankCredits.getClientId());
-    if (client != null){
-      return this.bankCreditsRepository.findById(bankCredits.getCreditsId())
+    return this.bankCreditsRepository.findById(bankCredits.getCreditsId())
           .flatMap(
               bankCredits1 -> Maybe.error(
                   new Error("BankCredits exist")),
@@ -56,8 +54,6 @@ public class BankCreditsServiceImpl implements BankCreditsService {
             }
           })
           .flatMapSingle(bankCreditsRepository::save);
-    }
-    return Maybe.error(new Error("Doesn't exist a client"));
   }
 
   /**

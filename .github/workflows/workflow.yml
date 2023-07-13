@@ -27,8 +27,8 @@ jobs:
             password: ${{secrets.DOCKERHUB_TOKEN}}
         - name: Build docker image
           run: |
-           docker build -t bankproducts:bankproductsv2 .
+           docker build -t bankproducts:bankproductsv3 .
         - name: Push Docker image
           run: |
-            docker tag bankproducts:bankproductsv2 vmedinam24/bankproducts:bankproductsv2
-            docker push vmedinam24/bankproducts:bankproductsv2
+            docker tag bankproducts:bankproductsv3 vmedinam24/bankproducts:bankproductsv3
+            docker push vmedinam24/bankproducts:bankproductsv3
