@@ -64,7 +64,9 @@ public class BankAccountServiceImpl implements BankAccountService {
    */
   @Override
   public Maybe<BankAccountResponse> create(BankAccount bankAccount) {
-    return this.bankAccountRepository
+    Client client = clientFeign.read(bankAccount.getClientId());
+    if (client != null){
+      return this.bankAccountRepository
           .findById(bankAccount.getAccountNumberId())
           .flatMap(
               bankAccount1 -> Maybe.error(new Error("BankAccount exist")),
@@ -86,6 +88,8 @@ public class BankAccountServiceImpl implements BankAccountService {
           })
           .flatMapSingle(bankAccountRepository::save)
           .map(BankAccountMapper.INSTANCE::map);
+    }
+    return Maybe.error(new Error("Doesn't exist a client"));
   }
 
   /**
