@@ -34,14 +34,27 @@ public class BankCreditsServiceImpl implements BankCreditsService {
   @Override
   public Maybe<BankCredits> create(BankCredits bankCredits) {
     Client client = clientFeign.read(bankCredits.getClientId());
-    if (client != null) {
-      this.bankCreditsRepository.findById(bankCredits.getCreditsId())
+    if (client != null){
+      return this.bankCreditsRepository.findById(bankCredits.getCreditsId())
           .flatMap(
               bankCredits1 -> Maybe.error(
                   new Error("BankCredits exist")),
               (error) -> Maybe.error(error),
               () -> Maybe.just(bankCredits)
           )
+          .flatMap(bankCredits1 -> {
+            if (bankCredits1.getNameTypeCredits()
+                .equalsIgnoreCase("personal")
+                || bankCredits1.getNameTypeCredits()
+                .equalsIgnoreCase("empresarial")
+                || bankCredits1.getNameTypeCredits()
+                .equalsIgnoreCase("tarjeta de credito")) {
+              return Maybe.just(bankCredits1);
+            } else {
+              return Maybe.error(
+                  new Error("Doesn't exist type of credits"));
+            }
+          })
           .flatMapSingle(bankCreditsRepository::save);
     }
     return Maybe.error(new Error("Doesn't exist a client"));
@@ -74,7 +87,7 @@ public class BankCreditsServiceImpl implements BankCreditsService {
             "bankCreditsId doesn't exist: " + bankCreditsId
         )))
         .flatMap(bankCredits -> {
-          if (bankCredits.getTotalAmount() >= bankCredits.getCreditsAmount()) {
+          if (bankCredits.getTotalAmount() > bankCredits.getCreditsAmount()) {
             bankCredits.setCreditsAmount(
                 bankCredits.getCreditsAmount() + amount);
             return Maybe.just(bankCredits);
